@@ -18,7 +18,7 @@ def ai_response(prompt):
         model="gemini-2.5-flash",
         contents = prompt,
         config=genai.types.GenerateContentConfig(
-            system_instruction="You are a helpful assistant.",
+            system_instruction="You are an assistant",
             max_output_tokens=1024,
         )
     )
