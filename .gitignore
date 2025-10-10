@@ -1,0 +1,5 @@
+# In .gitignore, replace the current content with this:
+.venv/
+__pycache__/
+*.pyc
+.env
