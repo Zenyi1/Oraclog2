@@ -1,44 +1,17 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 import uvicorn
-from google import genai
-import os
-from dotenv import load_dotenv
-from pydantic import BaseModel
+from .routes.logs import router as logs_router
+from .routes.analysis import router as analysis_router
 
-load_dotenv()
+app = FastAPI()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-client = genai.Client(api_key=API_KEY)
-
-app=FastAPI()
-
-def ai_response(prompt):
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents = prompt,
-        config=genai.types.GenerateContentConfig(
-            system_instruction="You are an assistant",
-            max_output_tokens=1024,
-        )
-    )
-    return response.text
-
-class PromptRequest(BaseModel):
-    prompt: str
-
+# Include routers with prefixes for organization
+app.include_router(logs_router, prefix="/logs", tags=["Logs"])
+app.include_router(analysis_router, prefix="/analyze", tags=["Analysis"])
 
 @app.get("/")
 async def root():
     return {"message": "LogOracle API caller"}
-
-@app.post("/generate-response")
-async def generate_response(request: PromptRequest):
-    try:
-        response = ai_response(request.prompt)
-        return {"response": response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error calling the Gemini API: {e}")
 
 port = 8000
 if __name__ == "__main__":
