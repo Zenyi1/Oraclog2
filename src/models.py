@@ -9,6 +9,9 @@ class LogEntry(BaseModel):
     message: str
     timestamp: str
 
+class batchLogRequest(BaseModel):
+    logs: list[LogEntry]
+
 class AnalysisRequest(BaseModel):
     log_id: int
     prompt_override: str = None

@@ -1,14 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from ..models import LogEntry
-from ..storage.storage import add_log, get_logs, logs_storage
+from ..storage.storage import get_logs, logs_storage
+from ..services.queue import log_queue
 
 router = APIRouter()
 
 @router.post("/")
 async def ingest_log(log: LogEntry):
     try:
-        add_log(log.dict())
-        return {"message": "Log ingested successfully", "log_id": len(logs_storage) - 1}
+        await log_queue.put(log.dict())
+        return {"message": "queued successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error ingesting log: {e}")
 
