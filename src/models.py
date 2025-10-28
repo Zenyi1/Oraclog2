@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModelm, Optional
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -15,3 +15,8 @@ class batchLogRequest(BaseModel):
 class AnalysisRequest(BaseModel):
     log_id: int
     prompt_override: str = None
+
+class Rule(BaseModel):
+    id: int
+    keyword: str
+    level: Optional[str] = None
