@@ -1,4 +1,4 @@
-from pydantic import BaseModelm, Optional
+from pydantic import BaseModel
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -19,4 +19,4 @@ class AnalysisRequest(BaseModel):
 class Rule(BaseModel):
     id: int
     keyword: str
-    level: Optional[str] = None
+    level: str = None

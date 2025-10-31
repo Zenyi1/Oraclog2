@@ -1,5 +1,6 @@
 logs_storage = []
 insights_storage = []
+rules_storage = []
 
 def add_log(log: dict):
     logs_storage.append(log)
