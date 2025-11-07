@@ -26,6 +26,7 @@ def list(limit, offset, level):
     response = requests.get(f"{API_BASE_URL}/logs", params=params)
     click.echo(response.json())
 
+# python -m src.cli logs create "server12" "critical fault in system error" --level ERROR "today" 
 @logs.command()
 @click.argument('source')
 @click.argument('message')
@@ -48,12 +49,14 @@ def rules():
     """Rule management commands"""
     pass
 
+# python -m src.cli logs list
 @rules.command()
 def list():
     """List all rules"""
     response = requests.get(f"{API_BASE_URL}/rules")
     click.echo(response.json())
 
+# python -m src.cli rules create "error" --level ERROR
 @rules.command()
 @click.argument('keyword')
 @click.option('--level', default=None)
@@ -80,6 +83,7 @@ def analyze():
     """Log analysis commands"""
     pass
 
+# python -m src.cli analyze log 1 --prompt "Check for security issues"
 @analyze.command()
 @click.argument('log_id', type=int)
 @click.option('--prompt', help='Optional prompt override')
@@ -92,6 +96,7 @@ def log(log_id, prompt):
     response = requests.post(f"{API_BASE_URL}/analyze", json=data)
     click.echo(response.json())
 
+# python -m src.cli analyze insights
 @analyze.command()
 @click.option('--limit', default=10)
 @click.option('--offset', default=0)
