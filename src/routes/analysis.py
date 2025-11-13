@@ -1,17 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from ..models import AnalysisRequest
 from ..services.service import ai_response
-from ..storage.storage import logs_storage, add_insight, get_insights
+from ..storage.storage import all_logs_storage, add_insight, get_insights
 
 router = APIRouter()
 
 @router.post("/")
 async def analyze_log(request: AnalysisRequest):
     try:
-        if request.log_id >= len(logs_storage) or request.log_id < 0:
+        if request.log_id >= len(all_logs_storage) or request.log_id < 0:
             raise HTTPException(status_code=404, detail="Log not found")
         
-        log = logs_storage[request.log_id]
+        log = all_logs_storage[request.log_id]
         prompt = f"{request.prompt_override or 'Analyze this log for incidents'}: {log['message']}"
         analysis = ai_response(prompt)
         add_insight(request.log_id, analysis)

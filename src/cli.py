@@ -1,7 +1,9 @@
 import click
 import requests
+from datetime import datetime  # Import datetime
+from src.file_watcher import LogFileWatcher
 
-API_BASE_URL = "http://localhost:8000"  # Updated to match app.py port
+API_BASE_URL = "http://localhost:8000"
 
 @click.group()
 def cli():
@@ -31,16 +33,22 @@ def list(limit, offset, level):
 @click.argument('source')
 @click.argument('message')
 @click.option('--level', default='INFO')
-@click.argument('timestamp')
-def create(source, message, level, timestamp):
+def create(source, message, level):
     """Create a new log entry"""
     data = {
         "source": source,
         "level": level,
         "message": message,
-        "timestamp": timestamp
+        "timestamp": datetime.now().isoformat()  # Add automatic timestamp
     }
     response = requests.post(f"{API_BASE_URL}/logs", json=data)
+    click.echo(response.json())
+
+@logs.command()
+@click.argument('timestamp')
+def get_by_timestamp(timestamp):
+    """Get logs for a specific timestamp"""
+    response = requests.get(f"{API_BASE_URL}/logs/timestamp/{timestamp}")
     click.echo(response.json())
 
 # Rules Management
@@ -107,6 +115,19 @@ def insights(limit, offset):
         params={'limit': limit, 'offset': offset}
     )
     click.echo(response.json())
+
+@cli.group()
+def watch():
+    """File watching commands"""
+    pass
+
+@watch.command()
+@click.argument('file_path')
+@click.option('--interval', default=2, help='Poll interval in seconds')
+def file(file_path, interval):
+    """Watch a log file and process new entries"""
+    watcher = LogFileWatcher(file_path, poll_interval=interval)
+    watcher.start()
 
 if __name__ == '__main__':
     cli()
